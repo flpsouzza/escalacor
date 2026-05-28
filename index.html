@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escala 12h - Supervisores</title>
+    <style>
+        :root { --primary: #075e54; --dia-bg: #e1f5fe; --noite-bg: #f5f5f5; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #d1d7db; margin: 0; padding: 10px; display: flex; justify-content: center; }
+        .calendar-container { background: white; width: 100%; max-width: 1100px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); overflow: hidden; min-height: 500px; }
+        .header { background: var(--primary); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header h2 { margin: 0; text-transform: capitalize; font-size: 1.4rem; }
+        .btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background: rgba(255,255,255,0.4); }
+        .grid { display: grid; grid-template-columns: repeat(7, 1fr); background: #ddd; gap: 1px; }
+        .weekday { background: #ededed; padding: 10px; text-align: center; font-weight: bold; font-size: 0.8rem; color: #666; }
+        .day { min-height: 140px; background: white; padding: 8px; position: relative; }
+        .day-num { font-weight: bold; margin-bottom: 10px; display: block; color: #333; }
+        .today { background: #fff9c4 !important; }
+        .shift { font-size: 0.85rem; padding: 6px; margin-bottom: 5px; border-radius: 4px; line-height: 1.2; box-shadow: 1px 1px 2px rgba(0,0,0,0.05); }
+        .shift-day { background: var(--dia-bg); border-left: 4px solid #03a9f4; color: #01579b; }
+        .shift-night { background: var(--noite-bg); border-left: 4px solid #455a64; color: #263238; }
+        .wa-link { text-decoration: none; color: inherit; font-weight: bold; display: block; }
+        .label { font-size: 0.65rem; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 2px; opacity: 0.7; }
+        @media (max-width: 750px) { .grid { grid-template-columns: repeat(2, 1fr); } .weekday { display: none; } }
+    </style>
+</head>
+<body>
+
+<div class="calendar-container">
+    <div class="header">
+        <button class="btn" onclick="changeMonth(-1)">❮ ANTERIOR</button>
+        <h2 id="monthTitle">Carregando...</h2>
+        <button class="btn" onclick="changeMonth(1)">PRÓXIMO ❯</button>
+    </div>
+    <div class="grid" id="calendarGrid"></div>
+</div>
+
+<script>
+    // LISTA DOS SUPERVISORES (Márcio Santos sem o TC)
+    const equipe = [
+        { nome: "Márcio Santos", tel: "5521994402549" },
+        { nome: "Paulo Alberto", tel: "5521993098887" },
+        { nome: "Luiz Nogueira", tel: "5521988241944" },
+        { nome: "Felipe Souza", tel: "5521967140414" }
+    ];
+
+    const dataRef = new Date(2026, 4, 27, 0, 0, 0); 
+    let viewDate = new Date(2026, 4, 1); 
+
+    function render() {
+        const grid = document.getElementById('calendarGrid');
+        const title = document.getElementById('monthTitle');
+        grid.innerHTML = '';
+
+        const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        days.forEach(d => grid.innerHTML += `<div class="weekday">${d}</div>`);
+
+        title.innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(viewDate);
+
+        const year = viewDate.getFullYear();
+        const month = viewDate.getMonth();
+        const firstDayIdx = new Date(year, month, 1).getDay();
+        const lastDayDate = new Date(year, month + 1, 0).getDate();
+
+        for (let i = 0; i < firstDayIdx; i++) {
+            grid.innerHTML += `<div class="day" style="background:#f9f9f9"></div>`;
+        }
+
+        for (let d = 1; d <= lastDayDate; d++) {
+            const dataFoco = new Date(year, month, d, 0, 0, 0);
+            const diffMilissegundos = dataFoco.getTime() - dataRef.getTime();
+            const diffDias = Math.floor(diffMilissegundos / (1000 * 60 * 60 * 24));
+            
+            const baseIdx = diffDias * 2;
+            const getPlantonista = (i) => equipe[((i % equipe.length) + equipe.length) % equipe.length];
+
+            const pDia = getPlantonista(baseIdx);
+            const pNoite = getPlantonista(baseIdx + 1);
+
+            const hoje = new Date();
+            const isToday = hoje.toDateString() === dataFoco.toDateString() ? 'today' : '';
+
+            grid.innerHTML += `
+                <div class="day ${isToday}">
+                    <span class="day-num">${d}</span>
+                    <div class="shift shift-day">
+                        <span class="label">☀️ 07:00 - 19:00</span>
+                        <a href="https://wa.me/${pDia.tel}" class="wa-link" target="_blank">${pDia.nome}</a>
+                    </div>
+                    <div class="shift shift-night">
+                        <span class="label">🌙 19:00 - 07:00</span>
+                        <a href="https://wa.me/${pNoite.tel}" class="wa-link" target="_blank">${pNoite.nome}</a>
+                    </div>
+                </div>`;
+        }
+    }
+
+    function changeMonth(s) {
+        viewDate.setMonth(viewDate.getMonth() + s);
+        render();
+    }
+
+    render();
+</script>
+
+</body>
+</html>
