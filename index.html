@@ -3,41 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala 12h - Supervisores</title>
+    <title>Escala de Supervisão - COR / Prefeitura</title>
     <style>
-        :root { --primary: #075e54; --dia-bg: #e1f5fe; --noite-bg: #f5f5f5; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #d1d7db; margin: 0; padding: 10px; display: flex; justify-content: center; }
-        .calendar-container { background: white; width: 100%; max-width: 1100px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); overflow: hidden; min-height: 500px; }
-        .header { background: var(--primary); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .header h2 { margin: 0; text-transform: capitalize; font-size: 1.4rem; }
-        .btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn:hover { background: rgba(255,255,255,0.4); }
-        .grid { display: grid; grid-template-columns: repeat(7, 1fr); background: #ddd; gap: 1px; }
-        .weekday { background: #ededed; padding: 10px; text-align: center; font-weight: bold; font-size: 0.8rem; color: #666; }
-        .day { min-height: 140px; background: white; padding: 8px; position: relative; }
-        .day-num { font-weight: bold; margin-bottom: 10px; display: block; color: #333; }
-        .today { background: #fff9c4 !important; }
-        .shift { font-size: 0.85rem; padding: 6px; margin-bottom: 5px; border-radius: 4px; line-height: 1.2; box-shadow: 1px 1px 2px rgba(0,0,0,0.05); }
-        .shift-day { background: var(--dia-bg); border-left: 4px solid #03a9f4; color: #01579b; }
-        .shift-night { background: var(--noite-bg); border-left: 4px solid #455a64; color: #263238; }
-        .wa-link { text-decoration: none; color: inherit; font-weight: bold; display: block; }
-        .label { font-size: 0.65rem; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 2px; opacity: 0.7; }
-        @media (max-width: 750px) { .grid { grid-template-columns: repeat(2, 1fr); } .weekday { display: none; } }
+        :root {
+            --cor-primary: #103058; /* Azul Marinho Oficial */
+            --cor-secondary: #007bff; /* Azul Claro Oficial */
+            --dia-bg: #eef6ff;
+            --noite-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #d1d7db;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh; /* Garante que o body ocupe a tela toda para o rodapé ficar no final */
+        }
+
+        /* CABEÇALHO INSTITUCIONAL */
+        .gov-header {
+            background-color: var(--cor-primary);
+            width: 100%;
+            padding: 15px 0;
+            color: white;
+            display: flex;
+            justify-content: center;
+            border-bottom: 4px solid var(--cor-secondary);
+        }
+
+        .header-content {
+            width: 95%;
+            max-width: 1100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 45px; 
+            object-fit: contain;
+            display: block;
+            filter: brightness(0) invert(1); 
+        }
+
+        /* CONTAINER DO CALENDÁRIO */
+        .calendar-container {
+            background: white;
+            width: 95%;
+            max-width: 1100px;
+            margin: 20px 0;
+            border-radius: 4px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            flex-grow: 1; /* Permite que o calendário cresça empurrando o rodapé para baixo */
+        }
+
+        .calendar-nav {
+            background: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .calendar-nav h2 {
+            margin: 0;
+            color: var(--cor-primary);
+            text-transform: capitalize;
+            font-weight: 600;
+        }
+
+        .btn {
+            background: var(--cor-primary);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .btn:hover { background: var(--cor-secondary); }
+
+        /* GRID */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: #eee;
+            gap: 1px;
+        }
+
+        .weekday {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: var(--cor-primary);
+            text-transform: uppercase;
+        }
+
+        .day {
+            min-height: 150px;
+            background: white;
+            padding: 8px;
+            transition: background 0.2s;
+            position: relative; 
+        }
+
+        .day-num {
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: block;
+            color: #999;
+            font-size: 1rem;
+        }
+
+        /* DESTAQUE DO DIA ATUAL */
+        .today {
+            background: #f0f7ff !important; 
+            box-shadow: inset 0 0 0 4px var(--cor-primary) !important; 
+        }
+
+        .today .day-num {
+            background-color: var(--cor-primary); 
+            color: white; 
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px; 
+            font-size: 0.9rem;
+        }
+
+        .today::before {
+            content: 'HOJE';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: var(--cor-secondary);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 3px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        /* TURNOS */
+        .shift {
+            font-size: 0.8rem;
+            padding: 8px;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            line-height: 1.3;
+            border-left: 4px solid #ccc;
+        }
+
+        .shift-day {
+            background: var(--dia-bg);
+            border-left-color: #ffca28;
+            color: #103058;
+            margin-top: 5px; 
+        }
+
+        .shift-night {
+            background: var(--noite-bg);
+            border-left-color: #103058;
+            color: #333;
+        }
+
+        .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            display: block;
+            margin-bottom: 3px;
+            color: #666;
+        }
+
+        .wa-link {
+            text-decoration: none;
+            color: inherit;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .wa-link:hover { color: var(--cor-secondary); }
+        .wa-link::before { content: '📞'; font-size: 0.7rem; }
+
+        /* RODAPÉ E ASSINATURA */
+        .footer {
+            width: 100%;
+            padding: 15px 0;
+            margin-top: auto; /* Empurra o rodapé para o final */
+            text-align: center;
+            font-size: 0.75rem;
+            color: #555;
+            background-color: #e2e6e9; /* Cinza claro discreto */
+            border-top: 1px solid #cdd3d8;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap; /* Para telas menores */
+        }
+
+        .footer a {
+            color: var(--cor-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: var(--cor-secondary);
+        }
+
+        .footer-divider {
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 750px) {
+            .grid { grid-template-columns: repeat(2, 1fr); }
+            .weekday { display: none; }
+            .logo-img { height: 35px; }
+            .footer-content { flex-direction: column; gap: 5px; }
+            .footer-divider { display: none; }
+        }
     </style>
 </head>
 <body>
 
+<header class="gov-header">
+    <div class="header-content">
+        <div class="logo-area">
+            <img src="RIOPREFEITURA%20COR%20horizontal%20azul.png" alt="Centro de Operações Rio" class="logo-img">
+        </div>
+        <div style="font-size: 0.8rem; font-weight: bold; opacity: 0.8;">SISTEMA DE ESCALA v2.0</div>
+    </div>
+</header>
+
 <div class="calendar-container">
-    <div class="header">
-        <button class="btn" onclick="changeMonth(-1)">❮ ANTERIOR</button>
+    <div class="calendar-nav">
+        <button class="btn" onclick="changeMonth(-1)">❮ MÊS ANTERIOR</button>
         <h2 id="monthTitle">Carregando...</h2>
-        <button class="btn" onclick="changeMonth(1)">PRÓXIMO ❯</button>
+        <button class="btn" onclick="changeMonth(1)">PRÓXIMO MÊS ❯</button>
     </div>
     <div class="grid" id="calendarGrid"></div>
 </div>
 
+<footer class="footer">
+    <div class="footer-content">
+        <span>Desenvolvido por <strong>Felipe Souza</strong></span>
+        <span class="footer-divider">|</span>
+        <span><a href="https://wa.me/5521967140414" target="_blank">📱 (21) 96714-0414</a></span>
+        <span class="footer-divider">|</span>
+        <span><a href="mailto:felipe.souza@cor.rio">✉️ felipe.souza@cor.rio</a></span>
+        <span class="footer-divider">|</span>
+        <span><a href="mailto:felipe.souza@piemontefacilities.com.br">✉️ felipe.souza@piemontefacilities.com.br</a></span>
+    </div>
+</footer>
+
 <script>
-    // LISTA DOS SUPERVISORES (Márcio Santos sem o TC)
     const equipe = [
         { nome: "Márcio Santos", tel: "5521994402549" },
         { nome: "Paulo Alberto", tel: "5521993098887" },
@@ -45,54 +288,64 @@
         { nome: "Felipe Souza", tel: "5521967140414" }
     ];
 
-    const dataRef = new Date(2026, 4, 27, 0, 0, 0); 
-    let viewDate = new Date(2026, 4, 1); 
+    const dataRef = new Date(2026, 5, 30, 0, 0, 0); 
+    let viewDate = new Date(); 
+    viewDate.setDate(1); 
+
+    const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
     function render() {
-        const grid = document.getElementById('calendarGrid');
-        const title = document.getElementById('monthTitle');
-        grid.innerHTML = '';
+        try {
+            const grid = document.getElementById('calendarGrid');
+            const title = document.getElementById('monthTitle');
+            grid.innerHTML = '';
 
-        const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-        days.forEach(d => grid.innerHTML += `<div class="weekday">${d}</div>`);
+            const year = viewDate.getFullYear();
+            const month = viewDate.getMonth();
 
-        title.innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(viewDate);
+            title.innerText = nomesMeses[month] + ' de ' + year;
 
-        const year = viewDate.getFullYear();
-        const month = viewDate.getMonth();
-        const firstDayIdx = new Date(year, month, 1).getDay();
-        const lastDayDate = new Date(year, month + 1, 0).getDate();
+            const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            days.forEach(d => {
+                grid.innerHTML += `<div class="weekday">${d}</div>`;
+            });
 
-        for (let i = 0; i < firstDayIdx; i++) {
-            grid.innerHTML += `<div class="day" style="background:#f9f9f9"></div>`;
-        }
+            const firstDayIdx = new Date(year, month, 1).getDay();
+            const lastDayDate = new Date(year, month + 1, 0).getDate();
 
-        for (let d = 1; d <= lastDayDate; d++) {
-            const dataFoco = new Date(year, month, d, 0, 0, 0);
-            const diffMilissegundos = dataFoco.getTime() - dataRef.getTime();
-            const diffDias = Math.floor(diffMilissegundos / (1000 * 60 * 60 * 24));
-            
-            const baseIdx = diffDias * 2;
-            const getPlantonista = (i) => equipe[((i % equipe.length) + equipe.length) % equipe.length];
+            for (let i = 0; i < firstDayIdx; i++) {
+                grid.innerHTML += `<div class="day" style="background:#fafafa"></div>`;
+            }
 
-            const pDia = getPlantonista(baseIdx);
-            const pNoite = getPlantonista(baseIdx + 1);
+            for (let d = 1; d <= lastDayDate; d++) {
+                const diffMilissegundos = Date.UTC(year, month, d) - Date.UTC(dataRef.getFullYear(), dataRef.getMonth(), dataRef.getDate());
+                const diffDias = Math.floor(diffMilissegundos / (1000 * 60 * 60 * 24));
+                
+                const baseIdx = diffDias * 2;
+                const getPlantonista = (i) => equipe[((i % equipe.length) + equipe.length) % equipe.length];
 
-            const hoje = new Date();
-            const isToday = hoje.toDateString() === dataFoco.toDateString() ? 'today' : '';
+                const pDia = getPlantonista(baseIdx);
+                const pNoite = getPlantonista(baseIdx + 1);
 
-            grid.innerHTML += `
-                <div class="day ${isToday}">
-                    <span class="day-num">${d}</span>
-                    <div class="shift shift-day">
-                        <span class="label">☀️ 07:00 - 19:00</span>
-                        <a href="https://wa.me/${pDia.tel}" class="wa-link" target="_blank">${pDia.nome}</a>
-                    </div>
-                    <div class="shift shift-night">
-                        <span class="label">🌙 19:00 - 07:00</span>
-                        <a href="https://wa.me/${pNoite.tel}" class="wa-link" target="_blank">${pNoite.nome}</a>
-                    </div>
-                </div>`;
+                const hoje = new Date();
+                const isToday = (hoje.getFullYear() === year && hoje.getMonth() === month && hoje.getDate() === d) ? 'today' : '';
+
+                grid.innerHTML += `
+                    <div class="day ${isToday}">
+                        <span class="day-num">${d}</span>
+                        <div class="shift shift-day">
+                            <span class="label">☀️ Diurno (07h-19h)</span>
+                            <a href="https://wa.me/${pDia.tel}" class="wa-link" target="_blank">${pDia.nome}</a>
+                        </div>
+                        <div class="shift shift-night">
+                            <span class="label">🌙 Noturno (19h-07h)</span>
+                            <a href="https://wa.me/${pNoite.tel}" class="wa-link" target="_blank">${pNoite.nome}</a>
+                        </div>
+                    </div>`;
+            }
+        } catch (erro) {
+            console.error("Erro na criação do mapa: ", erro);
+            document.getElementById('monthTitle').innerText = "Erro ao carregar o calendário.";
         }
     }
 
@@ -101,7 +354,7 @@
         render();
     }
 
-    render();
+    window.onload = render;
 </script>
 
 </body>
